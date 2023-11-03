@@ -81,7 +81,7 @@
                                   <input
                                     type="file"
                                     id="avatar"
-                                    name="avatar"
+                                    name="file"
                                     accept="image/*"
                                   />
                                 </form>
@@ -126,7 +126,7 @@
                                 <form id="change-cover">
                                   <input
                                     type="file"
-                                    id="file-input-2"
+                                    id="cover"
                                     name="file"
                                     accept="image/*"
                                   />
@@ -279,9 +279,7 @@
                             id="about"
                             placeholder="Tell us a few words about yourself"
                             rows="5"
-                          >
-<%= user.about %></textarea
-                          >
+                          ><%= user.about %></textarea>
                         </div>
                       </div>
                     </div>
@@ -324,9 +322,9 @@
   if (user.about.length > 0) {
     profileForm.about.innerHTML = user.about;
   }
-</script> -->
+</script>
 
-<!-- <script>
+<script>
   const updateProfileImage = async (key) => {
     try {
       const res = await fetch("/update/avatar", {
@@ -360,47 +358,9 @@
       return error;
     }
   };
-</script> -->
-
-<script>
-  const changeAvatarForm = document.querySelector("#change-avatar");
-  changeAvatarForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const avatarFile = document.querySelector("#avatar").files[0];
-    const urlResponse = await fetch(
-      `/get/preSignedURL?fileName=${avatarFile.name}&contentType=${avatarFile.type}`,
-      { method: "GET" }
-    );
-    const urlData = await urlResponse.json();
-
-    const uploadResponse = await fetch(urlData.url, {
-      method: "PUT",
-      headers: {
-        "Content-Type": avatarFile.type,
-      },
-      body: avatarFile,
-    });
-
-    const response = await fetch("/profile", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        image: `https://d1ecyonmvcaoie.cloudfront.net/${urlData.fileName}`,
-      }),
-    });
-
-    const data = await response.json();
-    if (data._id) {
-      window.location.reload(true);
-    } else {
-      alert("Oops, something went wrong");
-    }
-  });
 </script>
 
-<!-- <script>
+<script>
   const form = document.querySelector("#change-avatar");
   const message = document.querySelector("#message");
 
@@ -456,9 +416,9 @@
     //   message.textContent = `Error uploading image: ${error}`;
     // });
   });
-</script> -->
+</script>
 
-<!-- <script>
+<script>
   const form2 = document.querySelector("#change-cover");
   const message2 = document.querySelector("#message-2");
 
@@ -500,9 +460,58 @@
       message2.textContent = `Error uploading image: ${error}`;
     }
   });
-</script> -->
+</script>
+ -->
+ <script>
+  const changeCoverForm = document.querySelector('#change-cover')
+  changeCoverForm.addEventListener('submit',async (e)=>{
+    console.log('inside coverchange')
+     e.preventDefault()
+     const coverFile = document.querySelector('#cover').files[0]
+    // console.log(avatarFile)
+     const urlresp = await fetch(`/get/presignedUrl?filename=${coverFile.name}&contenttype=${coverFile.type}`,{method:'GET'})
+     console.log("presigned url ",urlresp)
+     const urldata = await urlresp.json()
+     console.log( "pres ",  urldata.url,urldata.filename)
 
-<!-- <script>
+     const uploadResponse = await fetch(urldata.url,{
+      method:"PUT",
+      // mode:"no-cors",
+      headers:{"Content-Type":coverFile.type},
+      body:coverFile
+    })
+    console.log(uploadResponse)
+    const changecover = await fetch(`/profile/changecover?filename=${urldata.filename}`,{method:'GET'})
+    console.log(changecover)
+
+  })
+</script>
+<script>
+  const changeAvatarForm = document.querySelector('#change-avatar')
+  changeAvatarForm.addEventListener('submit',async (e)=>{
+     e.preventDefault()
+     const avatarFile = document.querySelector('#avatar').files[0]
+    // console.log(avatarFile)
+     const urlresp = await fetch(`/get/presignedUrl?filename=${avatarFile.name}&contenttype=${avatarFile.type}`,{method:'GET'})
+     console.log("presigned url ",urlresp)
+     const urldata = await urlresp.json()
+     console.log( "pres ",  urldata.url,urldata.filename)
+
+     const uploadResponse = await fetch(urldata.url,{
+      method:"PUT",
+      // mode:"no-cors",
+      headers:{"Content-Type":avatarFile.type},
+      body:avatarFile
+    })
+    console.log(uploadResponse)
+    const changeavatar = await fetch(`/profile/changeavatar?filename=${urldata.filename}`,{method:'GET'})
+    console.log(changeavatar)
+
+  })
+</script>
+
+<script>
+    const profileForm = document.querySelector("#profile-form");
   profileForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -514,7 +523,7 @@
       const phone = profileForm.phone.value;
       const about = profileForm.about.value;
 
-      const res = await fetch("/update/profile", {
+      const res = await fetch("/profile/update", {
         method: "PATCH",
         body: JSON.stringify({
           displayName,
@@ -524,8 +533,12 @@
           phone,
           about,
         }),
+        
         headers: { "Content-Type": "application/json" },
       });
+
+      const data = await res.json()
+      console.log(data)
 
       if (res.status == 200) {
         window.location.reload(true);
@@ -536,41 +549,4 @@
       alert("Oops something went wrong!");
     }
   });
-</script> -->
-
-<script>
-  const profileForm = document.querySelector("#profile-form");
-  profileForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const displayName = profileForm.displayName.value;
-    const firstName = profileForm.firstName.value;
-    const lastName = profileForm.lastName.value;
-    const phone = profileForm.phone.value;
-    const gender = profileForm.gender.value;
-    const about = profileForm.about.value;
-
-    const response = await fetch("/profile", {
-      method: "PATCH",
-      body: JSON.stringify({
-        displayName,
-        firstName,
-        lastName,
-        phone,
-        gender,
-        about,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    const data = await response.json();
-    if (data._id) {
-      window.location.reload(true);
-    } else {
-      alert("Something went wrong, try later");
-    }
-  });
-</script>
-
-<!--  -->
+</script> 

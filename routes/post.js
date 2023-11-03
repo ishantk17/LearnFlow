@@ -1,72 +1,60 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const moment = require("moment");
+const express = require('express')
+const router = express.Router()
+const mongoose = require('mongoose')
 
-const { ensureAuth } = require("../middleware/auth");
-const { ensureSignUp, ensureCreator } = require("../middleware/user");
+const { ensureCreator, ensureSignUp } = require('../middleware/user')
+const { ensureAuth } = require('../middleware/auth')
+const moment = require('moment')
+require('../models/Post')
+require('../models/User')
+require('../models/Comment')
+const comments = mongoose.model('Comments')
+const users = mongoose.model('users')
+const posts = mongoose.model('posts')
+router.get('/create/new',ensureAuth,ensureSignUp,ensureCreator,(req,res)=>{
+ res.render('create_post.ejs')
+})
 
-const Post = mongoose.model("posts");
-const User = mongoose.model("users");
-const Comment = mongoose.model("comments");
+router.post('/create/new',ensureAuth,ensureSignUp,ensureCreator,async (req,res)=>{
 
-const router = express.Router();
+    // console.log(req.body.title,req.body.description)
 
-router.get(
-  "/create/post",
-  ensureAuth,
-  ensureSignUp,
-  ensureCreator,
-  (req, res) => {
-    res.render("create-post");
-  }
-);
-
-router.post(
-  "/create/post",
-  ensureAuth,
-  ensureSignUp,
-  ensureCreator,
-  async (req, res) => {
     try {
-      const user = req.user;
-      const post = await Post.create({
-        ...req.body,
-        userID: user._id,
-      });
-      console.log(post);
-
-      res.status(200).send(post);
+        const post =  new posts ({
+            ...req.body,
+            userID:req.user.id
+    
+        })
+        const resp = await post.save()
+        res.send(resp)
     } catch (error) {
-      console.log(error);
-      res.status(500).send({
-        error: "Something went wrong",
-      });
+        res.send(error)
     }
-  }
-);
+})
+router.get('/:id',async (req,res)=>{
 
-router.get("/post/:id", ensureAuth, async (req, res) => {
-  const postID = req.params.id;
-  try {
-    const post = await Post.findById(postID);
-    if (!post) {
-      return res.redirect("/post-not-found"); // Take user to 404 page
+    try {
+        const post = await posts.findById(req.params.id)
+        if (!post){
+            return res.render('error-404.ejs')
+        }
+        console.log('post user id',post.userID)
+        const author = await users.findById(post.userID)
+        console.log("author",  author)
+        const comment = await comments.find({postID:req.params.id,parentID:null})
+        // console.log('comment',comment)
+        const postdate = moment(post.createdAt).format("dddd, MMMM Do YYYY, h:mm:ss a")
+        res.locals.author = author
+        res.locals.user = req.user
+        res.locals.postDate = postdate
+    res.locals.post = post
+    res.locals.comments = comment
+    res.render('post.ejs')
+    } catch (error) {
+        res.send(error)
     }
-    const author = await User.findById(post.userID);
-    const postDate = moment(post.createdAt).format("dddd, MMMM Do YYYY");
+    
+})
 
-    const comments = await Comment.find({ postID: postID, depth: 1 });
 
-    res.locals.post = post;
-    res.locals.comments = comments;
-    res.locals.author = author;
-    res.locals.postDate = postDate;
-
-    res.render("post");
-  } catch (error) {
-    console.log(error);
-    res.render("error-500");
-  }
-});
-
-module.exports = router;
+module.exports = router

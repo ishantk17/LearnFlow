@@ -1,13 +1,18 @@
-const mongoose = require("mongoose");
+require('../models/Post')
 
-const Post = mongoose.model("posts");
+const mongoose = require('mongoose')
+const posts = mongoose.model('posts')
 
-const fetchAllPosts = async (req, res, next) => {
-  const posts = await Post.find({});
-  res.locals.posts = posts;
-  next();
-};
+const fetchAllPost =async (req,res,next)=>{
+    
+    const post = await posts.find({})
+    // console.log(post)
+    res.locals.posts = post
+    next()
+   
+   
+}
 
-module.exports = {
-  fetchAllPosts,
-};
+
+
+module.exports = {fetchAllPost}

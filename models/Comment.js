@@ -1,34 +1,35 @@
 const mongoose = require("mongoose");
+const commentSchema = mongoose.Schema(
+  {
+    postID: {
+      type: String,
+      required: true,
+    },
+    depth: {
+      type: Number,
+      default: 1,
+    },
+    parentID: {
+      type: String,
+      default: null,
+    },
+    author: {
+      // Username
+      type: String,
+      required: true,
+    },
+    authorImage: {
+      type: String,
+      required: true,
+    },
+    commentText: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-const CommentSchema = new mongoose.Schema({
-  postID: {
-    type: String,
-    required: true,
-  },
-  author: {
-    type: String,
-    required: true,
-  },
-  authorImage: {
-    type: String,
-    required: true,
-  },
-  commentText: {
-    type: String,
-    required: true,
-  },
-  parentID: {
-    type: String,
-    default: null,
-  },
-  depth: {
-    type: Number,
-    default: 1,
-  },
-  createdAt: {
-    type: Number,
-    default: Date.now(),
-  },
-});
+const Comment = mongoose.model("Comments", commentSchema);
 
-mongoose.model("comments", CommentSchema);
+module.exports = Comment;

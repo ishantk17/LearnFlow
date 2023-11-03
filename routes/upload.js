@@ -1,67 +1,130 @@
-// AWS KEY: AKIAQ2TJILA4JDB3ERK2
-// AWS Secret: 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
+// aws-user-secret E9lZGP2GMFevYVgDrBDVF3+28yJwPX9kN5OrhzQt , TT31qWLZDtt2jaKcaLca2j9DhgioHm83R72CsCsA, yhoKcxYJWuLs7u7osS4E3MkcpMS9lA6JCmhWLo9f
+// access key AKIAZ7CUZWKHR4EAX44K ,  AKIAZ7CUZWKH3WDLSEGM, AKIATHMZ4BURI3Z4GNMN
 
-// 1. Bucket - Storage for application -> learnflow-resource-bucket
-// 2. CDN - https://d1ecyonmvcaoie.cloudfront.net -> Used to view/read any object inside the Bucket
-// 3. Policy -> Set of Permissions define that anyone to whom this policy is attached they will have access to Bucket
-// 4. User -> Set of credentials / application to which policies are attached
+// 1. created a bucket - storage for application - learn-flow-resource-bucket
+// 2. created a CDN using cloudfront - used to view/read any object inside the bucket
+// 3. Policy -set of permission - defines that anyone to whome this policy is attatched, they will have access to this bucket
+// 4. user - set of credentials / application to which policies are attatched
 
-// Pre-signed URL -> URL to our s3 bucket which allows us to upload a specific file
+const {S3Client,PutObjectCommand} = require('@aws-sdk/client-s3')
+const {getSignedUrl} = require('@aws-sdk/s3-request-presigner')
+require('dotenv').config()
+const express = require('express')
 
-// Choose File -> Make a request to aws to Pre-signed URL for S3 bucket -> use Pre-signed URL to upload the file
-
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+// const AWS = require("aws-sdk");
 const { v4: uuid } = require("uuid");
-
-const bucket = new S3Client({
-  region: "ap-south-1",
-  credentials: {
-    accessKeyId: "AKIAQ2TJILA4JDB3ERK2",
-    secretAccessKey: "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",
-  },
-});
-
-// URL -> Associated with a single with a fixed file name and a fixed file type
-//     -> Using this URL we are going to make a PUT request to AWS at the pre-signed URL, body -> file
-
-const express = require("express");
+const { ensureAuth } = require("../middleware/auth");
+// const { awsAccessKeyID, awsSecretAccessKey } = require("../config/keys");
 
 const router = express.Router();
 
-router.get("/get/preSignedURL", async (req, res) => {
-  //  DP.jpg -> DP-ajndfjhanghijdhgbaihbnga.jpg
-  // image/jpg -> [image, jpg]
-  const contentType = req.query.contentType;
+const bucket = new S3Client({
+  
+  region: "ap-south-1",
+  credentials:{
+    accessKeyId: "AKIATHMZ4BURI3Z4GNMN",
+  secretAccessKey: "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",
+  //   accessKeyId: 'AKIATHMZ4BURI3Z4GNMN',
+  // secretAccessKey: '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',
+  }
+  
+});
 
+const getPresignedUrl = async (fileName,contentType) => {
+
+    // const fileName = "DP.jpg"
+
+    const command = new PutObjectCommand({
+        Bucket:"bucket-for-profilepic-learnflow",
+        Key:fileName,
+        ContentType:contentType
+    })
+
+    const url = await getSignedUrl(bucket,command,{expiresIn:3600})
+    console.log("presigned url = ",url)
+    return url
+}
+
+
+router.get("/video", (req, res) => {
+  console.log("Here");
+  const range = req.headers.range;
+  const params = {
+    Bucket: "my-video-bucket-123",
+    Key: "Placewit - WebD English (2023-02-26 11_16 GMT 5_30).mp4",
+  };
+
+  s3.headObject(params, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.sendStatus(500);
+      return;
+    }
+
+    const fileSize = data.ContentLength;
+    console.log(fileSize);
+
+    const chunkSize = 1 * 1e6;
+    const start = Number(range.replace(/\D/g, ""));
+    const end = Math.min(start + chunkSize, fileSize - 1);
+    const contentLength = end - start + 1;
+
+    const readStream = s3
+      .getObject({
+        ...params,
+        Range: `bytes=${start}-${end}`,
+      })
+      .createReadStream();
+    res.writeHead(206, {
+      "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+      "Accept-Ranges": "bytes",
+      "Content-Length": contentLength,
+      "Content-Type": "video/mp4",
+    });
+
+    readStream.pipe(res);
+  });
+});
+
+router.get("/", ensureAuth, async (req, res) => {
+  const contentType = req.query.contentType;
+  const user = req.user;
+  console.log(contentType);
   const fileName =
+    user.googleID +
+    "/" +
     req.query.fileName.split(".")[0] +
-    "-" +
     uuid() +
     "." +
     contentType.split("/")[1];
 
-  const command = new PutObjectCommand({
-    Bucket: "learnflow-resource-bucket",
-    Key: fileName,
+  console.log(fileName);
+
+  const url = await s3.getSignedUrl("putObject", {
+    Bucket: "my-video-bucket-123",
     ContentType: contentType,
+    Key: fileName,
   });
 
-  const url = await getSignedUrl(bucket, command, { expiresIn: 3600 });
-  console.log(url);
-  console.log(fileName);
-  res.send({
+  res.json({
     url,
-    fileName,
+    key: fileName,
   });
 });
 
-module.exports = router;
+router.get('/presignedUrl', async(req,res)=>{
 
-/***
- *
- * 1. Pre-signed URL -> Used to upload a file on S3 Bucket
- * 2. Make a PUT Request to the above gen pre-signed url to upload the file to s3 Bucket
- * 3. Take CDN URL (https://d1ecyonmvcaoie.cloudfront.net/Screenshot+2023-04-29+at+4-4565ba4e-b9cd-482b-a3a8-b3a02446e7f8.png) -> Update User Profile in DB (PATCH)
- *
- */
+    const filename = req.query.filename.split('.')[0] + '-' + uuid() + '.'+ req.query.contenttype.split('/')[1]
+    // console.log(filename)
+    const contenttype = req.query.contenttype
+    // console.log(filename)
+    const url= await getPresignedUrl(filename,contenttype)
+    // console.log(url)
+    res.send({
+        url:url,
+
+        filename:filename
+    })
+})
+
+module.exports = router;

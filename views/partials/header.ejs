@@ -40,7 +40,7 @@
         <!-- Account navigation -->
         <div class="d-flex">
           <a
-            href="/profile"
+            href="/profile/settings"
             class="btn btn-icon btn-group-nav shadow btn-neutral"
           >
             <span class="btn-inner--icon"><i class="fas fa-user"></i></span>
@@ -48,29 +48,47 @@
               >My Profile</span
             >
           </a>
-          <div
+          <% if (user.role === 0){ %>
+            <a
+            href="/post/create/new"
+            class="btn btn-icon btn-group-nav shadow btn-neutral"
+          >
+            <span class="btn-inner--icon"><i class="fas fa-edit"></i></span>
+            <span class="btn-inner--text d-none d-md-inline-block"
+              >Create New Post</span
+            >
+          </a>
+
+          <a href="/filter_post/<%- user._id %>"  class="btn btn-icon btn-group-nav shadow btn-neutral" > 
+            <span class="btn-inner--icon"><i class="fas fa-smile"></i></span>
+            <span class="btn-inner--text d-none d-md-inline-block">
+            
+            My Posts
+            
+            </span
+            >
+             </a>
+         <% } %>
+          
+
+          <!-- <div
             class="btn-group btn-group-nav shadow ml-auto"
             role="group"
             aria-label="Basic example"
           >
-            <div
-              class="btn-group"
-              role="group"
-              style="transform: translateY(-50%)"
-            >
-              <% if(user.role===0) { %>
+            <div class="btn-group" role="group">
               <a
-                href="/create/post"
-                class="btn btn-icon btn-group-nav shadow btn-neutral"
+              href="/post/create/new"
+              class="btn btn-icon btn-group-nav shadow btn-neutral"
+            >
+              <span class="btn-inner--icon"><i class="fas fa-edit"></i></span>
+              <span class="btn-inner--text d-none d-md-inline-block"
+                >Create Post</span
               >
-                <span class="btn-inner--icon"><i class="fas fa-edit"></i></span>
-                <span class="btn-inner--text d-none d-md-inline-block"
-                  >Create Post</span
-                >
-              </a>
-              <% } %>
+            </a>
+
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

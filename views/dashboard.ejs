@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -64,11 +65,12 @@
                 <div class="card-header pt-4 pb-2">
                   <div class="card overflow-hidden border-0">
                     <img
-                      alt="Image placeholder"
+                      alt="<%= post.title %>"
                       loading="lazy"
                       src="../img/theme/light/app-2.png"
                       class="card-img-top"
                     />
+                    
                     <span class="mask bg-info opacity-3"></span>
                     <span
                       class="mask hover-mask bg-gradient-warning opacity-9"
@@ -105,5 +107,9 @@
     <script src="../js/purpose.js"></script>
     <!-- Demo JS - remove it when starting your project -->
     <script src="../js/demo.js"></script>
+    <script>
+      console.log(post);
+    </script>
   </body>
 </html>
+

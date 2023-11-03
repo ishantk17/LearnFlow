@@ -10,7 +10,7 @@
       name="description"
       content="Purpose is a unique and beautiful collection of UI elements that are all flexible and modular. A complete and customizable solution to building the website of your dreams."
     />
-    <meta name="author" content="Webpixels" />
+    <meta name="user" content="Webpixels" />
     <title>LearnFlow</title>
     <!-- Favicon -->
     <link rel="icon" href="/cstm-assets/logo.svg" type="image/png" />
@@ -71,9 +71,48 @@
                     >
                     <span class="text-sm text-muted"><%= postDate %></span>
                   </div>
+
+
+                  <!-- new added -->
+                  <div>
+                    <a href="#" class="text-muted"></a>
+                      <%= post.views %> <i class="far fa-eye mr-3 fa"></i
+                    ></a>
+
+                    <span id="like-count"><%= post.likes %></span> Likes 
+                    <a
+                      style="cursor: pointer"
+                      data-toggle="tooltip"
+                      data-original-title="Share Link"
+                      class="ml-3"
+                      id="shareBtn"
+                      onclick="share()"
+                    >
+                      <i
+                        class="fas fa-share-square"
+                        style="transform: scale(1.5)"
+                      ></i>
+                    </a>
+                  </div>
+
+
+
+
                 </div>
               </div>
             </div>
+          <!-- new dded -->
+            <video
+            id="my-video"
+            class="video-js"
+            controls
+            preload="auto"
+            data-id="<%= post._id %>"
+            poster="<%= post.thumbnailKey %>"
+            data-setup="{}"
+          >
+            <source src="/video/<%= post._id %>" type="video/mp4" />
+          </video>
           </div>
         </div>
       </section>
@@ -368,5 +407,19 @@
         }
       };
     </script>
+     <script>
+      console.log("HERE");
+    const share = () => {
+      // Copy the text inside the text field
+          navigator.clipboard.writeText(window.location.href);
+      
+      const shareBtn = document.querySelector("#shareBtn");
+      console.log(shareBtn);
+      shareBtn.setAttribute("data-original-title", "Copied to Clipboard");
+      setTimeout(() => {
+        shareBtn.setAttribute("data-original-title", "Share Link");
+      }, 5000);
+    };
+  </script>
   </body>
 </html>

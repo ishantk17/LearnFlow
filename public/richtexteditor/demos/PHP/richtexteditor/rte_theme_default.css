@@ -86,7 +86,7 @@ rte-toolbar {
 rte-codebox {
     flex: 99999;
     text-align: left;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.5;
     font-family: "Consolas", "Courier New", Courier, mono, serif;
 }
