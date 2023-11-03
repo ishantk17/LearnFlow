@@ -2,9 +2,9 @@
   "name": "algozenith-backendbootcamp",
   "version": "1.0.0",
   "description": "Blog Application for AlgoDS",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "node app.js",
     "dev": "nodemon app.js"
   },
   "dependencies": {
