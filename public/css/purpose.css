@@ -2095,9 +2095,12 @@ select.form-control[size],
 textarea.form-control {
   height: auto;
 }
-.form-group {
-  margin-bottom: 1rem;
+#profile-form{
+  margin-top: 5rem;
 }
+/* .form-group {
+  margin-bottom: 1rem;
+} */
 .form-text {
   display: block;
   margin-top: 0.25rem;
@@ -13861,6 +13864,7 @@ a.text-muted:hover {
 }
 .actions-toolbar {
   position: relative;
+  top: 40px;
 }
 .actions-search {
   display: none;

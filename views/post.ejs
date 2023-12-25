@@ -58,7 +58,7 @@
                     href="blog-article.html#"
                     class="avatar rounded-circle mr-3"
                   >
-                    <img alt="Image placeholder" src="<%= author.image %>" />
+                    <img alt="Image placeholder" src="https://www.findelahistoria.com/web/wp-content/uploads/2013/04/Iron-Man-3-banner.jpg" />
                   </a>
                 </div>
                 <div
@@ -74,13 +74,13 @@
 
 
                   <!-- new added -->
-                  <div>
-                    <a href="#" class="text-muted"></a>
+                   <div>
+                    <!-- <a href="#" class="text-muted"></a>
                       <%= post.views %> <i class="far fa-eye mr-3 fa"></i
                     ></a>
 
-                    <span id="like-count"><%= post.likes %></span> Likes 
-                    <a
+                    <span id="like-count"><%= post.likes %></span> Likes  -->
+                     <a
                       style="cursor: pointer"
                       data-toggle="tooltip"
                       data-original-title="Share Link"
@@ -93,16 +93,12 @@
                         style="transform: scale(1.5)"
                       ></i>
                     </a>
-                  </div>
-
-
-
-
+                  </div> 
                 </div>
               </div>
-            </div>
+            </div> 
           <!-- new dded -->
-            <video
+            <!-- <video
             id="my-video"
             class="video-js"
             controls
@@ -112,7 +108,7 @@
             data-setup="{}"
           >
             <source src="/video/<%= post._id %>" type="video/mp4" />
-          </video>
+          </video> -->
           </div>
         </div>
       </section>
@@ -131,7 +127,7 @@
                 <img
                   alt="Image placeholder"
                   class="rounded-circle shadow mr-4"
-                  src="<%= comment.authorImage %>"
+                  src="https://www.findelahistoria.com/web/wp-content/uploads/2013/04/Iron-Man-3-banner.jpg"
                   style="width: 64px; height: 64px"
                 />
                 <div class="media-body" id="comment-<%= comment._id %>">
@@ -166,7 +162,7 @@
                 <img
                   alt="Image placeholder"
                   class="avatar rounded-circle shadow mr-4"
-                  src="<%= user.image %>"
+                  src="https://www.findelahistoria.com/web/wp-content/uploads/2013/04/Iron-Man-3-banner.jpg"
                 />
                 <div class="media-body">
                   <form class="post-<%= post._id %>" id="post-<%= post._id %>">
@@ -254,7 +250,7 @@
         <img
                     alt="Image placeholder"
                     class="avatar rounded-circle shadow mr-4"
-                    src="<%= user.image %>"
+                    src="https://www.findelahistoria.com/web/wp-content/uploads/2013/04/Iron-Man-3-banner.jpg"
                   />
                   <div class="media-body">
                     <form
@@ -357,7 +353,7 @@
             commentBox.innerHTML = `<img
               alt="Image placeholder"
               class="rounded-circle shadow mr-4"
-              src="${comment.authorImage}"
+              src="https://www.findelahistoria.com/web/wp-content/uploads/2013/04/Iron-Man-3-banner.jpg"
               style="width: 64px; height: 64px"
             />
             <div class="media-body" id="comment-${comment._id}">

@@ -4,6 +4,7 @@ const path = require('path')
 const passport = require('passport')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
+const fileUpload = require('express-fileupload');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -11,7 +12,6 @@ const authRouter = require('./Routes/auth')
 const indexRouter = require('./Routes/index')
 const profileRouter = require('./Routes/profile')
 const postRouter = require('./Routes/post')
-const uploadRouter = require('./Routes/upload')
 const commentRouter = require('./Routes/comment')
 require('dotenv').config()
 
@@ -78,11 +78,14 @@ passport.use(
 })
 )
 
+app.use(fileUpload({
+    useTempFiles:true
+}));
+
 app.use('/post',postRouter)
 app.use('/auth',authRouter)
 app.use('/',indexRouter)
 app.use('/profile',profileRouter)
-app.use('/get',uploadRouter)
 app.use('/',commentRouter)
 
 
